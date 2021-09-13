@@ -147,12 +147,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future saveNopenPdf(BuildContext context) async {
     try {
+      final String report = "Report-";
+      final String date = "13-09-2021";
+      final concatReportDate = report + date;
+
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       String documentPath = documentDirectory.path;
-      File file = File("$documentPath/Report.pdf");
+
+      File file = File("$documentPath/$concatReportDate.pdf");
       file.writeAsBytesSync(await pdf.save());
 
-      String fullPath = "$documentPath/Report.pdf";
+      String fullPath = "$documentPath/$concatReportDate.pdf";
       print(fullPath);
 
       await Navigator.push(

@@ -12,10 +12,14 @@ class PdfPreviewScreen extends StatelessWidget {
 
   Future<void> shareData() async {
     try {
+      final String report = "Report-";
+      final String date = "13-09-2021";
+      final concatReportDate = report + date;
+
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       String documentPath = documentDirectory.path;
 
-      String fullPath = "$documentPath/Report.pdf";
+      String fullPath = "$documentPath/$concatReportDate.pdf";
       print(fullPath);
       Share.shareFiles([fullPath], text: 'Joy Alukkas EGP Report');
     } catch (e) {
