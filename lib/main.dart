@@ -58,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
     fetchReports();
   }
 
@@ -150,10 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       String documentPath = documentDirectory.path;
-      File file = File("$documentPath/example.pdf");
+      File file = File("$documentPath/Report.pdf");
       file.writeAsBytesSync(await pdf.save());
 
-      String fullPath = "$documentPath/example.pdf";
+      String fullPath = "$documentPath/Report.pdf";
       print(fullPath);
 
       await Navigator.push(
