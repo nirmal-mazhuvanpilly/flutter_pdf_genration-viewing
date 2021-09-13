@@ -6,37 +6,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
-import 'model/reports_model.dart';
-import 'view/pdf_preview.dart';
-import 'view/native_pdf_view_payload.dart';
+import '../model/reports_model.dart';
+import 'native_pdf_preview.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  //
+class NativePdfPayload extends StatefulWidget {
   //loading data from assets
+  @override
+  _NativePdfPayloadState createState() => _NativePdfPayloadState();
+}
+
+class _NativePdfPayloadState extends State<NativePdfPayload> {
   Future<ReportsModel> loadReports() async {
     String data = await rootBundle.loadString("assets/report.json");
     var res = json.decode(data);
@@ -56,10 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
     reportModel = await loadReports();
   }
 
+  savetoApplicationDirectory() async {
+    await fetchReports();
+    await writePdf();
+    await saveNopenPdf();
+  }
+
   @override
   void initState() {
     super.initState();
-    fetchReports();
+    savetoApplicationDirectory();
   }
 
   final pdf = pw.Document();
@@ -146,11 +131,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future saveNopenPdf(BuildContext context) async {
+  Future saveNopenPdf() async {
     try {
-      final String report = "Report-";
-      final String date = "13-09-2021";
-      final concatReportDate = report + date;
+      String report = "Report-";
+      String date = "13-09-2021";
+      String concatReportDate = report + date;
 
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       String documentPath = documentDirectory.path;
@@ -161,13 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
       String fullPath = "$documentPath/$concatReportDate.pdf";
       print(fullPath);
 
-      // Flutter Full PDF Viewer
-      await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PdfPreviewScreen(
-                    pdfpath: fullPath,
-                  )));
+      Navigator.pop(context);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => NativePdfPreviewScreen(path: fullPath),
+      ));
     } catch (e) {
       print("Exception thrown : $e");
     }
@@ -175,58 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("PDF"),
-      ),
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: RaisedButton(
-                  color: Colors.red,
-                  child: Text(
-                    'Pdf Preview',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    try {
-                      await writePdf();
-                      await saveNopenPdf(context);
-                    } catch (e) {
-                      print("Exception thrown : $e");
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: RaisedButton(
-                  color: Colors.red,
-                  child: Text(
-                    'Native Pdf Preview',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => NativePdfPayload()));
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return Container();
   }
 }
